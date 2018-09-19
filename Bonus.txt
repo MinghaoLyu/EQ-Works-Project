@@ -1,0 +1,14 @@
+#3 Model Bonus
+
+from pyspark.ml.classification import RandomForestClassifier
+from pyspark.ml.feature import VectorAssembler , StringIndexer
+bonus = StringIndexer(inputCol='City',outputCol='City_Index').fit(geo).transform(geo)
+bonus = StringIndexer(inputCol='POIID',outputCol='POIID_Index').fit(String).transform(bonus)
+vector = VectorAssembler(inputCols=['City_Index','poiLongitude','poiLatitude','POIID_Index'], outputCol='features')
+bonus = vector.transform(bonus)
+rf = RandomForestClassifier(labelCol='distance(km)',featuresCol='features')
+rf.fit(bonus)
+rf.transform(bonus)
+
+I choose random forest classification to make a prediction based on the POI and citys. 
+In case of missing latitude and longitude from request records we can use this to predict the approximate distance.
